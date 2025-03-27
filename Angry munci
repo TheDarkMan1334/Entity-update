@@ -116,7 +116,7 @@ achievementGiver({
     Title = "The Faster",
     Desc = "you",
     Reason = "Survive the Entity called Angry munci",
-    Image = "rbxassetid://14598264132"
+    Image = "rbxassetid://91939719716131"
 })
 Followed:Destroy()
 end
