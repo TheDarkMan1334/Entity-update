@@ -46,7 +46,7 @@ local Spawner = loadstring(game:HttpGet('https://raw.githubusercontent.com/MuhXd
 local entity = Spawner.createEntity({
     CustomName = "Intruder", -- Custom name of your entity
     Model = "rbxassetid://10430359225", -- Can be GitHub file or rbxassetid
-    Speed = 200, -- Percentage, 100 = default Rush speed
+    Speed = 300, -- Percentage, 100 = default Rush speed
     DelayTime = 0, -- Time before starting cycles (seconds)
     HeightOffset = 2,
     CanKill = true,
@@ -59,7 +59,7 @@ local entity = Spawner.createEntity({
     BreakLights = true,
     BackwardsMovement = true,
      MovementDeath = {
-        false, -- Turned On?
+        true, -- Turned On?
         '1',  --- '1'= 'Instant Without Being Looked out' | '2' = 'With Being Looked At' 
     },
     FlickerLights = {
@@ -67,8 +67,8 @@ local entity = Spawner.createEntity({
         0 -- Time (seconds)
     },
     Cycles = {
-        Min = 4,
-        Max = 4,
+        Min = 2,
+        Max = 2,
         WaitTime = 2,
     },
     CamShake = {
