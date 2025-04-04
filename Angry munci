@@ -9,9 +9,6 @@ if game.Workspace:FindFirstChild("SeekMovingNewClone") or
     entityModel = false -- Prevent entity from spawning
 
 end
-
-if entityModel then
-
 local Spawner = loadstring(game:HttpGet('https://raw.githubusercontent.com/MuhXd/DoorSuff/main/OtherSuff/DoorEntitySpawn%2BSource'))()
 
 
@@ -53,8 +50,8 @@ local entity = Spawner.createEntity({
         true, -- Enabled/Disabled
         {
             Type = "1", -- "Normal" or 1 | "Pop" or 2 | "endlessdoorsrebound" or "Rebound" or 3 | More coming Soon
-            Image1 = "rbxassetid://11237420484", -- Image1 url
-            Image2 = "rbxassetid://11237420484", -- Image2 url
+            Image1 = "rbxassetid://91939719716131", -- Image1 url
+            Image2 = "rbxassetid://91939719716131", -- Image2 url
             Shake = true,
             Sounds = {
                 "2663254285", -- SoundId Link or Roblox ID
