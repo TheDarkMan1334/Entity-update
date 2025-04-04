@@ -1,0 +1,188 @@
+local entityModel = true
+local latestRoom = game.ReplicatedStorage.GameData.LatestRoom.Value
+
+-- Check if in Seek, Figure, or rooms 90-100
+if game.Workspace:FindFirstChild("SeekMovingNewClone") or 
+   latestRoom == 50 or latestRoom == 100 or  -- Figure (50, 100)
+   (latestRoom >= 90 and latestRoom <= 100) then -- Rooms 90-100
+
+    entityModel = false -- Prevent entity from spawning
+
+end
+
+local PimColor = Instance.new("ColorCorrectionEffect", game.Lighting)
+PimColor.Parent = game.Lighting
+PimColor.Name = "PimWarn"
+PimColor.TintColor = Color3.fromRGB(255, 255, 255) -- Start with normal color  
+PimColor.Saturation = 0 
+PimColor.Contrast = 0 
+
+-- Gradually turn the room yellow over 10 seconds
+local tweenInfo = TweenInfo.new(10, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+local goal = {TintColor = Color3.fromRGB(255, 230, 150), Saturation = 0.2, Contrast = 0.4}
+game.TweenService:Create(PimColor, tweenInfo, goal):Play()
+
+-- After turning yellow, slowly return to normal over 10 seconds
+task.wait(10)
+local resetGoal = {TintColor = Color3.fromRGB(255, 255, 255), Saturation = 0, Contrast = 0}
+game.TweenService:Create(PimColor, tweenInfo, resetGoal):Play()
+
+function GitAud(soundgit,filename)
+    SoundName=tostring(SoundName)
+    local url=soundgit
+    local FileName = filename
+    writefile(FileName..".mp3", game:HttpGet(url))
+    return (getcustomasset or getsynasset)(FileName..".mp3")
+end
+
+function CustomGitSound(soundlink, vol, filename)
+    local Sound = Instance.new("Sound")
+    Sound.SoundId = GitAud(soundlink, filename)
+    Sound.Parent = workspace
+    Sound.Volume = 5
+    Sound:Play()
+end
+
+CustomGitSound("https://github.com/TheDarkMan1334/Chasing/raw/refs/heads/main/Pim.mp3%20(1)", 1, "PimWarning")
+wait(6)
+local Spawner = loadstring(game:HttpGet('https://raw.githubusercontent.com/MuhXd/DoorSuff/main/OtherSuff/DoorEntitySpawn%2BSource'))()
+
+
+-- PimMain
+local Pim = Spawner.createEntity({
+    CustomName = "Pim", 
+    Model = "rbxassetid://14064532721", 
+    Speed = 100, 
+    DelayTime = 1, 
+    HeightOffset = 2,
+    CanKill = true,
+    NoDieOnCrouching = false,
+    NoHiding = false,
+    AntiCrucifix = false,
+    KillRange = 40,
+    OneRoom = false,
+    DieOnLook = false,
+    BreakLights = false,
+    BackwardsMovement = true,
+     MovementDeath = {
+        false, -- Turned On?
+        '1',  --- '1'= 'Instant Without Being Looked out' | '2' = 'With Being Looked At'
+    },
+    FlickerLights = {
+        false, -- Enabled/Disabled
+        1, -- Time (seconds)
+    },
+    Cycles = {
+        Min = 1,
+        Max = 1,
+        WaitTime = 3,
+    },
+    CamShake = {
+        true, -- Enabled/Disabled
+        {3.5, 20, 0.1, 1}, -- Shake values (don't change if you don't know)
+        100, -- Shake start distance (from Entity to you)
+    },
+    Jumpscare = {
+        true, -- Enabled/Disabled
+        {
+            Type = "1", -- "Normal" or 1 | "Pop" or 2 | "endlessdoorsrebound" or "Rebound" or 3 | More coming Soon
+            Image1 = "rbxassetid://140701963935107", -- Image1 url
+            Image2 = "rbxassetid://140701963935107", -- Image2 url
+            Shake = true,
+            Sound1 = {
+                "0", -- SoundId Link or Roblox ID
+                { Volume = 5 }, -- Sound properties
+            },
+            Sound2 = {
+                "0", -- SoundId Link or Roblox ID
+                { Volume = 1 }, -- Sound properties
+            },
+            Flashing = {
+                true, -- Enabled/Disabled
+                Color3.fromRGB(255, 230, 150), -- Color
+            },
+            Tease = {
+                false, 
+                Min = 0,
+                Max = 0,
+            },
+        },
+    },
+    Color = 'GuidingLight', -- CuriousLight ( Yellow ) | GuidingLight ( Blue )
+    DiffrentMessages = true,
+    CustomDialog = {  
+        {"Death message here."}, 
+        {"Stop Dieing"},
+        {"Bruh", "Use what you have learned from Rush!"},
+        {"It seems like Template is causing quite the ruckus...", "Hide in a closet or bed as quickly as possible!"},
+         {"I have told You What to do", "YOU JUST HAVE A SKILL ISSUE"}
+    }
+})
+
+-----[[ Advanced Sctipting ]]-----
+
+Pim.Debug.OnEntityMoving = function(Invincible,Hiding,plrCollisionPoint)
+print("Invincible: "..tostring(Invincible))
+print("Player to Entity Collision (None hiding Point): "..tostring(plrCollisionPoint))
+print("Hiding: "..tostring(Hiding))
+end
+       
+Pim.Debug.OnEntitySpawned = function()
+    print("Entity has spawned:")
+wait(4)
+function GitAud(soundgit,filename)
+    SoundName=tostring(SoundName)
+    local url=soundgit
+    local FileName = filename
+    writefile(FileName..".mp3", game:HttpGet(url))
+    return (getcustomasset or getsynasset)(FileName..".mp3")
+end
+
+function CustomGitSound(soundlink, vol, filename)
+    local PimMov = Instance.new("Sound")
+    PimMov.SoundId = GitAud(soundlink, filename)
+    PimMov.Parent = workspace
+    PimMov.Volume = 2
+    PimMov:Play()
+end
+
+CustomGitSound("", 1, "PimMoving")
+end
+
+Pim.Debug.OnEntityDespawned = function()
+ ---====== Load achievement giver ======---
+local achievementGiver = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Custom%20Achievements/Source.lua"))()
+
+---====== Display achievement ======---
+achievementGiver({
+    Title = "They want your soul.",
+    Desc = "I see your",
+    Reason = "Survive the Entity called Pim",
+    Image = "rbxassetid://140701963935107"
+})   
+
+end
+
+Pim.Debug.OnEntityStartMoving = function()
+    print("Pim has started moving:")
+end
+
+Pim.Debug.OnEntityFinishedRebound = function()
+    print("PimGone")
+end
+
+Pim.Debug.OnEntityEnteredRoom = function(entityTable, room)
+end
+
+Pim.Debug.OnLookAtEntity = function()
+    print("Player has looked at entity:")
+end
+
+Pim.Debug.OnDeath = function()
+    warn("Player has died.")
+firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, {"You died to who you call Pim...", "He from other games...", "Hide when this happens!"}, "Blue")
+end
+
+-----------------------
+
+Spawner.runEntity(Pim)
