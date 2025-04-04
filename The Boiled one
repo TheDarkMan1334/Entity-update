@@ -9,9 +9,6 @@ if game.Workspace:FindFirstChild("SeekMovingNewClone") or
     entityModel = false -- Prevent entity from spawning
 
 end
-
-if entityModel then
-
 function GitAud(soundgit,filename)
     SoundName=tostring(SoundName)
     local url=soundgit
