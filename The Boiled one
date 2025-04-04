@@ -11,12 +11,6 @@ if game.Workspace:FindFirstChild("SeekMovingNewClone") or
 end
 
 if entityModel then
-    -- Place your entity spawn code here
-    print("Entity has spawned!")
-else
-    print("Entity blocked due to Seek, Figure, or room 90-99.")
-end
-
 
 function GitAud(soundgit,filename)
     SoundName=tostring(SoundName)
