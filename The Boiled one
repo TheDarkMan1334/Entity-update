@@ -24,7 +24,7 @@ function CustomGitSound(soundlink, vol, filename)
     spawn.Volume = 3
     spawn:Play()
 end
-wait(42)
+wait(38)
 CustomGitSound("https://github.com/TheDarkMan1334/Chasing/raw/refs/heads/main/TheBoiledOne.mp3", 1, "spawns")
 
 
@@ -36,7 +36,7 @@ local entity = Spawner.createEntity({
     CustomName = "The Boiled One", -- Custom name of your entity
     Model = "rbxassetid://104340749857449", -- Can be GitHub file or rbxassetid
     Speed = 31, -- Percentage, 100 = default Rush speed
-    DelayTime = 15, -- Time before starting cycles (seconds)
+    DelayTime = 0, -- Time before starting cycles (seconds)
     HeightOffset = 0,
     CanKill = true,
     NoDieOnCrouching = false,
