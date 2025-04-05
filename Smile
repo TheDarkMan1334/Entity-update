@@ -41,7 +41,7 @@ local cue2 = Instance.new("Sound")
 	cue2.Volume = 4
 	cue2.PlaybackSpeed = 0.8
 	cue2:Play()
-
+wait(4)
 local Spawner = loadstring(game:HttpGet('https://raw.githubusercontent.com/MuhXd/DoorSuff/main/OtherSuff/DoorEntitySpawn%2BSource'))()
 
 
