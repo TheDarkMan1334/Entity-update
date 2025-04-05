@@ -24,7 +24,7 @@ function CustomGitSound(soundlink, vol, filename)
     spawn.Volume = 3
     spawn:Play()
 end
-
+wait(42)
 CustomGitSound("https://github.com/TheDarkMan1334/Chasing/raw/refs/heads/main/TheBoiledOne.mp3", 1, "spawns")
 
 
@@ -46,7 +46,7 @@ local entity = Spawner.createEntity({
     OneRoom = false,
     DieOnLook = false,
     BreakLights = true,
-    BackwardsMovement = true,
+    BackwardsMovement = false,
      MovementDeath = {
         true, -- Turned On?
         '1',  --- '1'= 'Instant Without Being Looked out' | '2' = 'With Being Looked At' 
