@@ -1,26 +1,26 @@
+-- Check current room
 local entityModel = true
 local latestRoom = game.ReplicatedStorage.GameData.LatestRoom.Value
 
--- Check if in Seek, Figure, or rooms 90-100
+-- If in Seek, Figure, or Room 90+
 if game.Workspace:FindFirstChild("SeekMovingNewClone") or 
-   latestRoom == 50 or latestRoom == 100 or  -- Figure (50, 100)
-   (latestRoom >= 90 and latestRoom <= 100) then -- Rooms 90-100
-
-    entityModel = false -- Prevent entity from spawning
-
+   latestRoom == 50 or latestRoom == 100 or  
+   (latestRoom >= 90 and latestRoom <= 100) then
+    entityModel = false
 end
-local Spawner = loadstring(game:HttpGet('https://raw.githubusercontent.com/MuhXd/DoorSuff/main/OtherSuff/DoorEntitySpawn%2BSource'))()
 
+-- Load entity spawner
+local Spawner = loadstring(game:HttpGet('https://raw.githubusercontent.com/MuhXd/DoorSuff/main/OtherSuff/DoorEntitySpawn%2BSource'))()
 
 -- Create entity
 local entity = Spawner.createEntity({
-    CustomName = "Angry munci", -- Custom name of your entity
-    Model = "rbxassetid://10866625072", -- Can be GitHub file or rbxassetid
-    Speed = 7000, -- Percentage, 100 = default Rush speed
-    DelayTime = 22, -- Time before starting cycles (seconds)
-    HeightOffset = 0,
-    CanKill = true,
-    NoDieOnCrouching = false,
+    CustomName = "Angry munci",
+    Model = "rbxassetid://10866625072",
+    Speed = 10000,
+    DelayTime = 22,
+    HeightOffset = 1,
+    CanKill = false,
+    NoDieOnCrouching = true,
     NoHiding = false,
     AntiCrucifix = false,
     KillRange = 40,
@@ -28,131 +28,93 @@ local entity = Spawner.createEntity({
     DieOnLook = false,
     BreakLights = true,
     BackwardsMovement = false,
-     MovementDeath = {
-        false, -- Turned On?
-        '1',  --- '1'= 'Instant Without Being Looked out' | '2' = 'With Being Looked At'
-    },
-    FlickerLights = {
-        true, -- Enabled/Disabled
-        20 -- Time (seconds)
-    },
-    Cycles = {
-        Min = 12,
-        Max = 16,
-        WaitTime = 2,
-    },
-    CamShake = {
-        true, -- Enabled/Disabled
-        {14, 20, 1, 1}, -- Shake values (don't change if you don't know)
-        100, -- Shake start distance (from Entity to you)
-    },
+    MovementDeath = { false, '1' },
+    FlickerLights = { true, 20 },
+    Cycles = { Min = 12, Max = 15, WaitTime = 2 },
+    CamShake = { true, {3.5, 20, 0.1, 1}, 100 },
     Jumpscare = {
-        true, -- Enabled/Disabled
+        true,
         {
-            Type = "1", -- "Normal" or 1 | "Pop" or 2 | "endlessdoorsrebound" or "Rebound" or 3 | More coming Soon
-            Image1 = "rbxassetid://91939719716131", -- Image1 url
-            Image2 = "rbxassetid://91939719716131", -- Image2 url
+            Type = "1",
+            Image1 = "rbxassetid://91939719716131",
+            Image2 = "rbxassetid://91939719716131",
             Shake = true,
             Sounds = {
-                "2663254285", -- SoundId Link or Roblox ID
-                { Volume = 5 }, -- Sound properties
+                "18564431123", { Volume = 5 },
             },
             Sound2 = {
-                "0", -- SoundId Link or Roblox ID
-                { Volume = 3 }, -- Sound properties
+                "18564431123", { Volume = 5 },
             },
             Flashing = {
-                true, -- Enabled/Disabled
-                Color3.fromRGB(48, 25, 52), -- Color
+                true,
+                Color3.fromRGB(48, 25, 52),
             },
             Tease = {
-                false, -- Enabled/Disabled
-                Min = 7,
-                Max = 7,
+                false,
+                Min = 1,
+                Max = 1,
             },
         },
     },
-    Color = 'GuidingLight', -- CuriousLight ( Yellow ) | GuidingLight ( Blue )
-    DiffrentMessages = false,
-    CustomDialog = {  
-        {"Claim has seen you.", "It will consume anyone on sight.", "It takes a bit to fully spawn in", "so you can use that to your advantage."}, -- Death Messages
-        {"Stop Dieing"},
-        {"Bruh", "Use what you have learned from Rush!"},
-        {"It seems like Template is causing quite the ruckus...", "Hide in a closet or bed as quickly as possible!"},
-         {"I have told You What to do", "YOU JUST HAVE A SKILL ISSUE"}
+    Color = 'GuidingLight',
+    DiffrentMessages = true,
+    CustomDialog = {
+        {"You died to Whisper", "How to survive?", "Hide and use your skill", "So many eyes."},
+        {"Stop dying"},
+        {"Bruh", "Use what you learned from Rush!"},
+        {"Seems like Angry Munci is causing chaos...", "Hide in a closet or under a bed quickly!"},
+        {"I already told you what to do", "YOU JUST HAVE A SKILL ISSUE"}
     }
 })
 
------[[ Advanced Sctipting ]]-----
-
-entity.Debug.OnEntityMoving = function(Invincible,Hiding,plrCollisionPoint)
-print("Invincible: "..tostring(Invincible))
-print("Player to Entity Collision (None hiding Point): "..tostring(plrCollisionPoint))
-print("Hiding: "..tostring(Hiding))
+-- Debug events
+entity.Debug.OnEntityMoving = function(Invincible, Hiding, plrCollisionPoint)
+    print("Invincible:", Invincible)
+    print("Player to Entity Collision:", plrCollisionPoint)
+    print("Hiding:", Hiding)
 end
-       
+
 entity.Debug.OnEntitySpawned = function()
-    print("Entity has spawned:")
+    print("Entity has spawned!")
 end
 
 entity.Debug.OnEntityDespawned = function()
-    print("Entity has despawned:")
+    print("Entity has despawned.")
 
----====== Load achievement giver ======---
-local achievementGiver = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Custom%20Achievements/Source.lua"))()
-
----====== Display achievement ======---
-achievementGiver({
-    Title = "The Faster",
-    Desc = "you",
-    Reason = "Survive the Entity called Angry munci",
-    Image = "rbxassetid://91939719716131"
-})
-Followed:Destroy()
+    -- Give achievement
+    local achievementGiver = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Custom%20Achievements/Source.lua"))()
+    achievementGiver({
+        Title = "The Faster",
+        Desc = "You think you can hide?!",
+        Reason = "Encountered Angry Munci.",
+        Image = "rbxassetid://91939719716131"
+    })
 end
 
 entity.Debug.OnEntityFinishedRebound = function()
-    print("Entity has finished rebound:")
+    print("Entity finished rebound.")
 end
 
 entity.Debug.OnEntityEnteredRoom = function(entityTable, room)
-    print("Entity:", "has entered room:",room)
+    print("Entity entered room:", room)
 end
 
 entity.Debug.OnLookAtEntity = function()
-    print("Player has looked at entity:")
+    print("Player looked at the entity.")
 end
 
 entity.Debug.OnDeath = function()
     warn("Player has died.")
-    local func, setupval, getinfo, typeof, getgc, next = nil, debug.setupvalue or setupvalue, debug.getinfo or getinfo, typeof, getgc, next
-
-for i,v in next, getgc(false) do
-    if typeof(v) == "function" then
-        local info = getinfo(v)
-        if info.currentline == 54 and info.nups == 2 and info.is_vararg == 0 then
-            func = v
-            break
-        end
-    end
+    firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, {
+        "You died to ?", 
+        "Smile...", 
+        "Hide when this happens!"
+    }, "Blue")
 end
 
-local function DeathHint(hints, type: string)
-    setupval(func, 1, hints)
-    if type ~= nil then
-        setupval(func, 2, type)
-    end
+-- Only run the entity if allowed
+if entityModel then
+    Spawner.runEntity(entity)
+else
+    warn("Entity spawn prevented due to Seek, Figure, or Rooms 90-100.")
 end
-
-DeathHint({
-    "You died to who you Call Angry munci",
-    "Just don't see",
-    "Its form is incomprehensible to a human upclose...",
-    "..-so avoid Eye Contact"
-}, "Blue") -- "Blue" or "Yellow"
-end
-
-------------------------
-
--- Run the created entity
-Spawner.runEntity(entity)
