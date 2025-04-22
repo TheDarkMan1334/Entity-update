@@ -24,9 +24,9 @@ function CustomGitSound(soundlink, vol, filename)
     spawn.Volume = 3
     spawn:Play()
 end
-wait(38)
-CustomGitSound("https://github.com/TheDarkMan1334/Chasing/raw/refs/heads/main/TheBoiledOne.mp3", 1, "spawns")
 
+CustomGitSound("https://github.com/TheDarkMan1334/Chasing/raw/refs/heads/main/TheBoiledOne.mp3", 1, "spawns")
+wait(38)
 
 local Spawner = loadstring(game:HttpGet('https://raw.githubusercontent.com/MuhXd/DoorSuff/main/OtherSuff/DoorEntitySpawn%2BSource'))()
 
