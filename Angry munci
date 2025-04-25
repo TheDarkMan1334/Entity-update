@@ -16,7 +16,7 @@ local Spawner = loadstring(game:HttpGet('https://raw.githubusercontent.com/MuhXd
 local entity = Spawner.createEntity({
     CustomName = "Angry munci",
     Model = "rbxassetid://10866625072",
-    Speed = 10000,
+    Speed = 1000,
     DelayTime = 22,
     HeightOffset = 1,
     CanKill = true,
@@ -30,8 +30,8 @@ local entity = Spawner.createEntity({
     BackwardsMovement = false,
     MovementDeath = { false, '1' },
     FlickerLights = { true, 20 },
-    Cycles = { Min = 12, Max = 15, WaitTime = 2 },
-    CamShake = { true, {3.5, 20, 0.1, 1}, 100 },
+    Cycles = { Min = 12, Max = 12, WaitTime = 2 },
+    CamShake = { true, {3.9, 20, 1, 9}, 100 },
     Jumpscare = {
         true,
         {
