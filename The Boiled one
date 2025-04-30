@@ -1,17 +1,14 @@
 local entityModel = true
 local latestRoom = game.ReplicatedStorage.GameData.LatestRoom.Value
 
--- Check if in Seek, Figure, or rooms 90-100
-if game.Workspace:FindFirstChild("SeekMovingNewClone") or 
-   latestRoom == 50 or latestRoom == 100 or  -- Figure (50, 100)
-   (latestRoom >= 90 and latestRoom <= 100) then -- Rooms 90-100
-
+-- Check if in Seek, Figure (room 50), or from room 90 onward
+if game.Workspace:FindFirstChild("SeekMovingNewClone") or latestRoom == 50 or latestRoom >= 90 then
     entityModel = false -- Prevent entity from spawning
-
 end
-function GitAud(soundgit,filename)
-    SoundName=tostring(SoundName)
-    local url=soundgit
+
+function GitAud(soundgit, filename)
+    SoundName = tostring(SoundName)
+    local url = soundgit
     local FileName = filename
     writefile(FileName..".mp3", game:HttpGet(url))
     return (getcustomasset or getsynasset)(FileName..".mp3")
@@ -30,7 +27,6 @@ wait(38)
 
 local Spawner = loadstring(game:HttpGet('https://raw.githubusercontent.com/MuhXd/DoorSuff/main/OtherSuff/DoorEntitySpawn%2BSource'))()
 
-
 -- Create entity
 local entity = Spawner.createEntity({
     CustomName = "The Boiled One", -- Custom name of your entity
@@ -47,87 +43,67 @@ local entity = Spawner.createEntity({
     DieOnLook = false,
     BreakLights = true,
     BackwardsMovement = false,
-     MovementDeath = {
-        true, -- Turned On?
-        '1',  --- '1'= 'Instant Without Being Looked out' | '2' = 'With Being Looked At' 
-    },
-    FlickerLights = {
-        false, -- Enabled/Disabled
-        0 -- Time (seconds)
-    },
-    Cycles = {
-        Min = 1,
-        Max = 1,
-        WaitTime = 0,
-    },
-    CamShake = {
-        false, -- Enabled/Disabled
-        {3.5, 20, 0.1, 1}, -- Shake values (don't change if you don't know)
-        100, -- Shake start distance (from Entity to you)
-    },
+    MovementDeath = { true, '1' },
+    FlickerLights = { false, 0 },
+    Cycles = { Min = 1, Max = 1, WaitTime = 0 },
+    CamShake = { false, {3.5, 20, 0.1, 1}, 100 },
     Jumpscare = {
-        true, -- Enabled/Disabled
+        true,
         {
-            Type = "1", -- "Normal" or 1 | "Pop" or 2 | "endlessdoorsrebound" or "Rebound" or 3 | More coming Soon
-            Image1 = "rbxassetid://11237420484", -- Image1 url
-            Image2 = "rbxassetid://11237420484", -- Image2 url
+            Type = "1",
+            Image1 = "rbxassetid://11237420484",
+            Image2 = "rbxassetid://11237420484",
             Shake = true,
             Sounds = {
-                "0", -- SoundId Link or Roblox ID
-                { Volume = 5 }, -- Sound properties
+                "0", { Volume = 5 },
             },
             Sound2 = {
-                "0", -- SoundId Link or Roblox ID
-                { Volume = 5 }, -- Sound properties
+                "0", { Volume = 5 },
             },
             Flashing = {
-                true, -- Enabled/Disabled
-                Color3.fromRGB(255, 0, 0), -- Color
+                true,
+                Color3.fromRGB(255, 0, 0),
             },
             Tease = {
-                false, -- Enabled/Disabled
+                false,
                 Min = 1,
                 Max = 1,
             },
         },
     },
-    Color = 'GuidingLight', -- CuriousLight ( Yellow ) | GuidingLight ( Blue )
+    Color = 'GuidingLight',
     DiffrentMessages = false,
     CustomDialog = {  
-        {"Claim has seen you.", "It will consume anyone on sight.", "It takes a bit to fully spawn in", "so you can use that to your advantage."}, -- Death Messages
+        {"Claim has seen you.", "It will consume anyone on sight.", "It takes a bit to fully spawn in", "so you can use that to your advantage."},
         {"Stop Dieing"},
         {"Bruh", "Use what you have learned from Rush!"},
         {"It seems like Template is causing quite the ruckus...", "Hide in a closet or bed as quickly as possible!"},
-         {"I have told You What to do", "YOU JUST HAVE A SKILL ISSUE"}
+        {"I have told You What to do", "YOU JUST HAVE A SKILL ISSUE"}
     }
 })
 
------[[ Advanced Sctipting ]]-----
+-----[[ Advanced Scripting ]]-----
 
-entity.Debug.OnEntityMoving = function(Invincible,Hiding,plrCollisionPoint)
-print("Invincible: "..tostring(Invincible))
-print("Player to Entity Collision (None hiding Point): "..tostring(plrCollisionPoint))
-print("Hiding: "..tostring(Hiding))
+entity.Debug.OnEntityMoving = function(Invincible, Hiding, plrCollisionPoint)
+    print("Invincible: "..tostring(Invincible))
+    print("Player to Entity Collision (None hiding Point): "..tostring(plrCollisionPoint))
+    print("Hiding: "..tostring(Hiding))
 end
-       
+
 entity.Debug.OnEntitySpawned = function()
-    print("Entity has spawned:")
+    print("Entity has spawned!")
 end
 
 entity.Debug.OnEntityDespawned = function()
-    print("Entity has despawned:")
-
----====== Load achievement giver ======---
-local achievementGiver = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Custom%20Achievements/Source.lua"))()
-
----====== Display achievement ======---
-achievementGiver({
-    Title = "The noise..",
-    Desc = "Don't Move And pray ",
-    Reason = "The Boiled One",
-    Image = "rbxassetid://133181234252846"
-})
-Followed:Destroy()
+    print("Entity has despawned.")
+    local achievementGiver = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Custom%20Achievements/Source.lua"))()
+    achievementGiver({
+        Title = "The noise..",
+        Desc = "Don't Move And pray ",
+        Reason = "The Boiled One",
+        Image = "rbxassetid://133181234252846"
+    })
+    Followed:Destroy()
 end
 
 entity.Debug.OnEntityFinishedRebound = function()
@@ -135,7 +111,7 @@ entity.Debug.OnEntityFinishedRebound = function()
 end
 
 entity.Debug.OnEntityEnteredRoom = function(entityTable, room)
-    print("Entity:", "has entered room:",room)
+    print("Entity:", "has entered room:", room)
 end
 
 entity.Debug.OnLookAtEntity = function()
@@ -144,34 +120,38 @@ end
 
 entity.Debug.OnDeath = function()
     warn("Player has died.")
-    local func, setupval, getinfo, typeof, getgc, next = nil, debug.setupvalue or setupvalue, debug.getinfo or getinfo, typeof, getgc, next
+    local func, setupval, getinfo, typeof, getgc, next = nil, debug.setupvalue or setupval, debug.getinfo or getinfo, typeof, getgc, next
 
-for i,v in next, getgc(false) do
-    if typeof(v) == "function" then
-        local info = getinfo(v)
-        if info.currentline == 54 and info.nups == 2 and info.is_vararg == 0 then
-            func = v
-            break
+    for i,v in next, getgc(false) do
+        if typeof(v) == "function" then
+            local info = getinfo(v)
+            if info.currentline == 54 and info.nups == 2 and info.is_vararg == 0 then
+                func = v
+                break
+            end
         end
     end
-end
 
-local function DeathHint(hints, type: string)
-    setupval(func, 1, hints)
-    if type ~= nil then
-        setupval(func, 2, type)
+    local function DeathHint(hints, type)
+        setupval(func, 1, hints)
+        if type ~= nil then
+            setupval(func, 2, type)
+        end
     end
-end
 
-DeathHint({
-    "You died to who you Call Angry munci",
-    "Just don't see",
-    "Its form is incomprehensible to a human upclose...",
-    "..-so avoid Eye Contact"
-}, "Blue") -- "Blue" or "Yellow"
+    DeathHint({
+        "You died to who you Call Angry munci",
+        "Just don't see",
+        "Its form is incomprehensible to a human upclose...",
+        "..-so avoid Eye Contact"
+    }, "Blue")
 end
 
 ------------------------
 
--- Run the created entity
-Spawner.runEntity(entity)
+-- Run the created entity only if allowed
+if entityModel then
+    Spawner.runEntity(entity)
+else
+    warn("Entity spawn prevented due to Seek, Figure, or Rooms 90+.")
+end
