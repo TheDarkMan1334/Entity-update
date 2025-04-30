@@ -1,0 +1,83 @@
+-- Check current room
+local entityModel = true
+local latestRoom = game.ReplicatedStorage.GameData.LatestRoom.Value
+
+-- If in Seek, Figure, or Room 50+, don't spawn the entity
+if game.Workspace:FindFirstChild("SeekMovingNewClone") or 
+   latestRoom == 50 or latestRoom >= 90 then
+    entityModel = false
+end
+
+local Kill = true
+local Range = 22 -- Range of 30 studs
+local DamagePerTick = 5 -- Deal 5 damage per second
+local DamageCooldown = 1 -- 1 second between damage
+
+-- Load Hater model
+local hater = game:GetObjects("rbxassetid://12266358809")[1]
+hater.Parent = game.Workspace
+hater.Name = "Hater"
+
+local part = hater:FindFirstChildWhichIsA("BasePart") or hater:FindFirstChildWhichIsA("Part")
+part.CFrame = game.Workspace.CurrentRooms:GetChildren()[#game.Workspace.CurrentRooms:GetChildren() - 1].Parts.Floor.CFrame + Vector3.new(0, 6, 0)
+
+-- Red screen effect
+local Lighting = game:GetService("Lighting")
+local TweenService = game:GetService("TweenService")
+
+local ColorCorrection = Instance.new("ColorCorrectionEffect")
+ColorCorrection.Parent = Lighting
+ColorCorrection.TintColor = Color3.new(1, 1, 1) -- Start as normal white
+ColorCorrection.Enabled = true
+
+-- Smoothly fade to red over 3 seconds
+TweenService:Create(ColorCorrection, TweenInfo.new(3), {TintColor = Color3.fromRGB(255, 0, 0)}):Play()
+
+-- Damage loop
+task.spawn(function()
+    while Kill do
+        task.wait(DamageCooldown)
+        local player = game.Players.LocalPlayer
+        if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then continue end
+
+        local playerPos = player.Character.HumanoidRootPart.Position
+        local entityPos = part.Position
+
+        if (playerPos - entityPos).Magnitude <= Range then
+            -- Deal damage
+            local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid and humanoid.Health > 0 then
+                humanoid:TakeDamage(DamagePerTick)
+            end
+
+            -- If player dies
+            if humanoid and humanoid.Health <= 0 then
+                firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, 
+                    {"You died to Hater...", "It drains your health if you get too close.", "Keep your distance next time!"}, "Red")
+                wait(0.01)
+                game.ReplicatedStorage.GameStats["Player_"..player.Name].Total.DeathCause.Value = "Hater"
+            end
+        end
+    end
+end)
+
+-- When a new door is opened, remove Hater and reset the lighting
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+Kill = false
+
+task.spawn(function()
+    -- Fade the red screen back to normal
+    TweenService:Create(ColorCorrection, TweenInfo.new(1), {TintColor = Color3.new(1, 1, 1)}):Play()
+    task.wait(1)
+    ColorCorrection:Destroy()
+    hater:Destroy()
+end)
+
+-- Show achievement
+local achievementGiver = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Custom%20Achievements/Source.lua"))()
+achievementGiver({
+    Title = "Red Face.",
+    Desc = "He just wants your health.",
+    Reason = "Survived Hater.",
+    Image = "rbxassetid://94887885986859"
+})
