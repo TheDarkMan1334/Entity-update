@@ -1,0 +1,94 @@
+local latestRoom = game.ReplicatedStorage.GameData.LatestRoom.Value
+local entityModel = true
+
+if game.Workspace:FindFirstChild("SeekMovingNewClone") or
+   latestRoom == 50 or latestRoom >= 90 then
+    entityModel = false
+end
+
+if entityModel then
+    --// Config
+    local SoundId = "rbxassetid://9125712561"
+    local ScreamDuration = 11
+
+    --// Setup
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local Workspace = game:GetService("Workspace")
+    local Players = game:GetService("Players")
+    local TweenService = game:GetService("TweenService")
+
+    local player = Players.LocalPlayer
+    local latestRoom = ReplicatedStorage:WaitForChild("GameData"):WaitForChild("LatestRoom")
+    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+
+    --// Create sound
+    local sound = Instance.new("Sound")
+    sound.SoundId = SoundId
+    sound.Volume = 5
+    sound.Looped = false
+    sound.Parent = Workspace
+    sound:Play()
+
+    --// Death trigger
+    local active = true
+
+    local function createRedFlash()
+        -- ColorCorrectionEffect
+        local lighting = game:GetService("Lighting")
+        local colorEffect = Instance.new("ColorCorrectionEffect")
+        colorEffect.TintColor = Color3.new(1, 0, 0)
+        colorEffect.Brightness = 0
+        colorEffect.Enabled = true
+        colorEffect.Parent = lighting
+
+        -- Red Flash
+        TweenService:Create(colorEffect, TweenInfo.new(0.2), {Brightness = 2}):Play()
+        task.wait(0.2)
+        TweenService:Create(colorEffect, TweenInfo.new(0.5), {Brightness = 0}):Play()
+        task.wait(0.5)
+
+        colorEffect:Destroy()
+    end
+
+    local function onRoomChange()
+        if active and humanoid and humanoid.Health > 0 then
+            humanoid.Health = 0
+            task.wait(0.1)
+
+            -- jumpscare
+            createRedFlash()
+
+            -- DeathHint
+            firesignal(ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, 
+            {"You died to the Cursed Door...", "Do not open doors when something screams!", "Patience could save you."}, "Red")
+
+            if ReplicatedStorage:FindFirstChild("GameStats") and ReplicatedStorage.GameStats:FindFirstChild("Player_"..player.Name) then
+                ReplicatedStorage.GameStats["Player_"..player.Name].Total.DeathCause.Value = "Cursed Door"
+            end
+        end
+    end
+
+    --// Connect when player opens a door
+    latestRoom.Changed:Connect(onRoomChange)
+
+    --// Auto-disable after scream ends
+    task.delay(ScreamDuration, function()
+        active = false
+        if sound then
+            sound:Destroy()
+        end
+    end)
+
+    --// Achievement (optional)
+    task.delay(ScreamDuration + 1, function()
+        if not active then
+            local achievementGiver = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Custom%20Achievements/Source.lua"))()
+            achievementGiver({
+                Title = "Uncursed.",
+                Desc = "Don't be fooled!",
+                Reason = "Survived Cursed Door.",
+                Image = "rbxassetid://84988556788398"
+            })
+        end
+    end)
+end
