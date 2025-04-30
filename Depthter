@@ -70,5 +70,5 @@ achievementGiver({
     Title = "Look at me",
     Desc = "It wants you to look at it!",
     Reason = "Survived and Encountered DepthTer.",
-    Image = "rbxassetid://0"
+    Image = "rbxassetid://119795964474591"
 })
