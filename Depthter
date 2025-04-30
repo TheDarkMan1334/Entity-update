@@ -2,61 +2,73 @@
 local entityModel = true
 local latestRoom = game.ReplicatedStorage.GameData.LatestRoom.Value
 
--- If in Seek, Figure, or Room 90+
+-- If in Seek, Figure, or Room 50+, don't spawn the entity
 if game.Workspace:FindFirstChild("SeekMovingNewClone") or 
-   latestRoom == 50 or latestRoom == 100 or  
-   (latestRoom >= 90 and latestRoom <= 100) then
+   latestRoom == 50 or latestRoom >= 90 then
     entityModel = false
 end
 
-local Kill = true
-local depthsTer = game:GetObjects("rbxassetid://12442784694")[1] -- Load DepthsTer from the ID
-depthsTer.Parent = game.Workspace
+if entityModel then
+    local Kill = true
+    local depthsTer = game:GetObjects("rbxassetid://12442784694")[1] -- Load DepthsTer from the ID
+    depthsTer.Parent = game.Workspace
 
-local part = depthsTer:FindFirstChildWhichIsA("BasePart") or depthsTer:FindFirstChildWhichIsA("Part")
+    local part = depthsTer:FindFirstChildWhichIsA("BasePart") or depthsTer:FindFirstChildWhichIsA("Part")
 
--- Set the position of DepthsTer in the room
-part.CFrame = game.Workspace.CurrentRooms:GetChildren()[#game.Workspace.CurrentRooms:GetChildren() - 1].Parts.Floor.CFrame + Vector3.new(0, 6, 0)
+    -- Set the position of DepthsTer in the room
+    part.CFrame = game.Workspace.CurrentRooms:GetChildren()[#game.Workspace.CurrentRooms:GetChildren() - 1].Parts.Floor.CFrame + Vector3.new(0, 6, 0)
 
-wait(3)
+    wait(3)
 
--- Create the blue room effect (similar to Frostbite)
-local ColorCorrectionEffect0 = Instance.new("ColorCorrectionEffect")
-ColorCorrectionEffect0.Parent = game:GetService("Lighting")
-ColorCorrectionEffect0.TintColor = Color3.new(1, 1, 1)  -- Initially white
-ColorCorrectionEffect0.Enabled = true
+    -- Create the blue room effect (similar to Frostbite)
+    local ColorCorrectionEffect0 = Instance.new("ColorCorrectionEffect")
+    ColorCorrectionEffect0.Parent = game:GetService("Lighting")
+    ColorCorrectionEffect0.TintColor = Color3.new(1, 1, 1)  -- Initially white
+    ColorCorrectionEffect0.Enabled = true
 
--- Gradually change to blue (like Frostbite)
-game.TweenService:Create(ColorCorrectionEffect0, TweenInfo.new(7), {TintColor = Color3.new(0.00784314, 0.188235, 1)}):Play()
+    -- Gradually change to blue (like Frostbite)
+    game.TweenService:Create(ColorCorrectionEffect0, TweenInfo.new(7), {TintColor = Color3.new(0.00784314, 0.188235, 1)}):Play()
 
-task.spawn(function()
-    while Kill == true do
-        task.wait(0.1)  -- Reduce the wait time to increase damage speed
-        local _, camera = game.Workspace.CurrentCamera:WorldToViewportPoint(part.Position)
-        
-        -- If the player is not looking at DepthTer, they take damage
-        if not camera then
-            game.Players.LocalPlayer.Character.Humanoid:TakeDamage(10)
+    task.spawn(function()
+        while Kill == true do
+            task.wait(0.1)  -- Reduce the wait time to increase damage speed
+            local _, camera = game.Workspace.CurrentCamera:WorldToViewportPoint(part.Position)
+
+            -- If the player is not looking at DepthTer, they take damage
+            if not camera then
+                game.Players.LocalPlayer.Character.Humanoid:TakeDamage(10)
+            end
+
+            -- If the player dies, update the death cause and show the death hint
+            if game.Players.LocalPlayer.Character.Humanoid.Health <= 0 then
+                -- Show death hint
+                firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, 
+                    {"You died to who you call DepthTer...", "It will freeze your health if you don't watch out.", "Look at it or suffer!"}, "Blue")
+                wait(0.01)
+                -- Update the death cause in the game stats
+                game:GetService("ReplicatedStorage").GameStats["Player_".. game.Players.LocalPlayer.Name].Total.DeathCause.Value = "DepthTer"
+            end
         end
-        
-        -- If the player dies, update the death cause and show the death hint
-        if game.Players.LocalPlayer.Character.Humanoid.Health <= 0 then
-            -- Show death hint
-            firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, 
-                {"You died to who you call DepthTer...", "It will freeze your health if you don't watch out.", "Look at it or suffer!"}, "Blue")
-            wait(0.01)
-            -- Update the death cause in the game stats
-            game:GetService("ReplicatedStorage").GameStats["Player_".. game.Players.LocalPlayer.Name].Total.DeathCause.Value = "DepthTer"
-        end
-    end
-end)
+    end)
 
--- Wait for the room to change
-game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
-Kill = false
+    -- Wait for the room to change
+    game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+    Kill = false
 
--- Destroy DepthTer when no longer needed
-depthsTer:Destroy()
+    -- Destroy DepthTer when no longer needed
+    depthsTer:Destroy()
 
--- Stop the blue effect when it's no longer needed
-game.TweenService:Create(ColorCorrectionEffect0, TweenInfo.new(7), {TintColor = Color3.new(1, 1, 1)}):Play()
+    -- Stop the blue effect when it's no longer needed
+    game.TweenService:Create(ColorCorrectionEffect0, TweenInfo.new(7), {TintColor = Color3.new(1, 1, 1)}):Play()
+end
+
+---====== Load achievement giver ======---
+local achievementGiver = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Custom%20Achievements/Source.lua"))()
+
+---====== Display achievement ======---
+achievementGiver({
+    Title = "Look at me",
+    Desc = "It wants you to look at it!",
+    Reason = "Survived and Encountered DepthTer.",
+    Image = "rbxassetid://0"
+})
