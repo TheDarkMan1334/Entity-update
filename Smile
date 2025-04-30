@@ -1,18 +1,18 @@
 local SmileColor = Instance.new("ColorCorrectionEffect", game.Lighting)
 game.Debris:AddItem(SmileColor, 24) 
 SmileColor.Name = "SmileWarn" 
-SmileColor.TintColor = Color3.fromRGB(255, 0, 0) -- Start with red  
+SmileColor.TintColor = Color3.fromRGB(255, 0, 0)
 SmileColor.Saturation = -0.7 
 SmileColor.Contrast = 0.2 
 
--- Smoothly transition back to normal over 10 seconds (change time as needed)  
-game.TweenService:Create(SmileColor, TweenInfo.new(10), { 
-    TintColor = Color3.fromRGB(255, 255, 255), -- Normal color  
-    Saturation = 0, 
-    Contrast = 0 
+-- Smooth transition back to normal
+game.TweenService:Create(SmileColor, TweenInfo.new(10), {
+    TintColor = Color3.fromRGB(255, 255, 255),
+    Saturation = 0,
+    Contrast = 0
 }):Play()
 
--- Camera shake effect  
+-- Camera shake
 local CameraShaker = require(game.ReplicatedStorage.CameraShaker)
 local camera = game.Workspace.CurrentCamera
 local camShake = CameraShaker.new(Enum.RenderPriority.Camera.Value, function(shakeCf)
@@ -22,35 +22,37 @@ end)
 camShake:Start()
 camShake:ShakeOnce(10, 3, 0.1, 6, 2, 0.5)
 
-local entityModel = true
+-- Room restriction logic
+local entityAllowed = true
 local latestRoom = game.ReplicatedStorage.GameData.LatestRoom.Value
 
--- Check if in Seek, Figure, or rooms 90-100
 if game.Workspace:FindFirstChild("SeekMovingNewClone") or 
-   latestRoom == 50 or latestRoom == 100 or  -- Figure (50, 100)
-   (latestRoom >= 90 and latestRoom <= 100) then -- Rooms 90-100
-
-    entityModel = false -- Prevent entity from spawning
-
+   latestRoom == 50 or latestRoom == 100 or 
+   (latestRoom >= 90 and latestRoom <= 100) then
+    entityAllowed = false
 end
 
+if not entityAllowed then return end  -- Stop script here if not allowed
+
+-- Play spawn sound
 local cue2 = Instance.new("Sound")
-	cue2.Parent = game.Workspace
-	cue2.Name = "Spawn"
-	cue2.SoundId = "rbxassetid://6891548543"
-	cue2.Volume = 4
-	cue2.PlaybackSpeed = 0.8
-	cue2:Play()
+cue2.Parent = game.Workspace
+cue2.Name = "Spawn"
+cue2.SoundId = "rbxassetid://6891548543"
+cue2.Volume = 4
+cue2.PlaybackSpeed = 0.8
+cue2:Play()
+
 wait(4)
+
+-- Load Spawner and create entity
 local Spawner = loadstring(game:HttpGet('https://raw.githubusercontent.com/MuhXd/DoorSuff/main/OtherSuff/DoorEntitySpawn%2BSource'))()
 
-
--- Create entity
 local entity = Spawner.createEntity({
-    CustomName = "Smile", -- Custom name of your entity
-    Model = "rbxassetid://10422371891", -- Can be GitHub file or rbxassetid
-    Speed = 200, -- Percentage, 100 = default Rush speed
-    DelayTime = 3, -- Time before starting cycles (seconds)
+    CustomName = "Smile",
+    Model = "rbxassetid://10422371891",
+    Speed = 200,
+    DelayTime = 3,
     HeightOffset = 2,
     CanKill = true,
     NoDieOnCrouching = false,
@@ -61,13 +63,13 @@ local entity = Spawner.createEntity({
     DieOnLook = false,
     BreakLights = false,
     BackwardsMovement = true,
-     MovementDeath = {
-        false, -- Turned On?
-        '1',  --- '1'= 'Instant Without Being Looked out' | '2' = 'With Being Looked At' 
+    MovementDeath = {
+        false,
+        '1',
     },
     FlickerLights = {
-        false, -- Enabled/Disabled
-        0 -- Time (seconds)
+        false,
+        0
     },
     Cycles = {
         Min = 1,
@@ -75,55 +77,54 @@ local entity = Spawner.createEntity({
         WaitTime = 0,
     },
     CamShake = {
-        true, -- Enabled/Disabled
-        {3.5, 20, 0.1, 1}, -- Shake values (don't change if you don't know)
-        100, -- Shake start distance (from Entity to you)
+        true,
+        {3.5, 20, 0.1, 1},
+        100,
     },
     Jumpscare = {
-        true, -- Enabled/Disabled
+        true,
         {
-            Type = "1", -- "Normal" or 1 | "Pop" or 2 | "endlessdoorsrebound" or "Rebound" or 3 | More coming Soon
-            Image1 = "rbxassetid://11237420484", -- Image1 url
-            Image2 = "rbxassetid://11237420484", -- Image2 url
+            Type = "1",
+            Image1 = "rbxassetid://11237420484",
+            Image2 = "rbxassetid://11237420484",
             Shake = true,
             Sounds = {
-                "6600188325", -- SoundId Link or Roblox ID
-                { Volume = 5 }, -- Sound properties
+                "6600188325",
+                { Volume = 5 },
             },
             Sound2 = {
-                "6600188325", -- SoundId Link or Roblox ID
-                { Volume = 5 }, -- Sound properties
+                "6600188325",
+                { Volume = 5 },
             },
             Flashing = {
-                true, -- Enabled/Disabled
-                Color3.fromRGB(255, 0, 0), -- Color
+                true,
+                Color3.fromRGB(255, 0, 0),
             },
             Tease = {
-                false, -- Enabled/Disabled
+                false,
                 Min = 1,
                 Max = 1,
             },
         },
     },
-    Color = 'GuidingLight', -- CuriousLight ( Yellow ) | GuidingLight ( Blue )
+    Color = 'GuidingLight',
     DiffrentMessages = true,
-    CustomDialog = {  
-        {"You die by whipser", "how to suviver?", "hide and user your skill", "so many eyes."}, -- Death Messages
+    CustomDialog = {
+        {"You die by whipser", "how to suviver?", "hide and user your skill", "so many eyes."},
         {"Stop Dieing"},
         {"Bruh", "Use what you have learned from Rush!"},
         {"It seems like Template is causing quite the ruckus...", "Hide in a closet or bed as quickly as possible!"},
-         {"I have told You What to do", "YOU JUST HAVE A SKILL ISSUE"}
+        {"I have told You What to do", "YOU JUST HAVE A SKILL ISSUE"}
     }
 })
 
------[[ Advanced Sctipting ]]-----
-
-entity.Debug.OnEntityMoving = function(Invincible,Hiding,plrCollisionPoint)
-print("Invincible: "..tostring(Invincible))
-print("Player to Entity Collision (None hiding Point): "..tostring(plrCollisionPoint))
-print("Hiding: "..tostring(Hiding))
+-- Advanced Debugging
+entity.Debug.OnEntityMoving = function(Invincible, Hiding, plrCollisionPoint)
+    print("Invincible: "..tostring(Invincible))
+    print("Player to Entity Collision (None hiding Point): "..tostring(plrCollisionPoint))
+    print("Hiding: "..tostring(Hiding))
 end
-       
+
 entity.Debug.OnEntitySpawned = function()
     print("Entity has spawned:")
 end
@@ -131,17 +132,15 @@ end
 entity.Debug.OnEntityDespawned = function()
     print("Entity has despawned:")
 
----====== Load achievement giver ======---
-local achievementGiver = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Custom%20Achievements/Source.lua"))()
+    local achievementGiver = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Custom%20Achievements/Source.lua"))()
 
----====== Display achievement ======---
-achievementGiver({
-    Title = "i remember this Smile.",
-    Desc = "Smile ?",
-    Reason = "Suviver Entity Called Smile.",
-    Image = "rbxassetid://99622699305600"
-})
-Followed:Destroy()
+    achievementGiver({
+        Title = "i remember this Smile.",
+        Desc = "Smile ?",
+        Reason = "Suviver Entity Called Smile.",
+        Image = "rbxassetid://99622699305600"
+    })
+    Followed:Destroy()
 end
 
 entity.Debug.OnEntityFinishedRebound = function()
@@ -149,7 +148,7 @@ entity.Debug.OnEntityFinishedRebound = function()
 end
 
 entity.Debug.OnEntityEnteredRoom = function(entityTable, room)
-    print("Entity:", "has entered room:",room)
+    print("Entity:", "has entered room:", room)
 end
 
 entity.Debug.OnLookAtEntity = function()
@@ -158,11 +157,10 @@ end
 
 entity.Debug.OnDeath = function()
     warn("Player has died.")
- firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, {"You died to ?", "Smile..", "Hide when this happens!"}, "Blue")
-
+    firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, {
+        "You died to ?", "Smile..", "Hide when this happens!"
+    }, "Blue")
 end
 
-------------------------
-
--- Run the created entity
+-- Run the entity
 Spawner.runEntity(entity)
