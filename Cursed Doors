@@ -9,7 +9,7 @@ end
 if entityModel then
     --// Config
     local SoundId = "rbxassetid://9125712561"
-    local ScreamDuration = 11
+    local ScreamDuration = 18
 
     --// Setup
     local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -33,7 +33,6 @@ if entityModel then
     local active = true
 
     local function createRedFlash()
-        -- ColorCorrectionEffect
         local lighting = game:GetService("Lighting")
         local colorEffect = Instance.new("ColorCorrectionEffect")
         colorEffect.TintColor = Color3.new(1, 0, 0)
@@ -41,7 +40,6 @@ if entityModel then
         colorEffect.Enabled = true
         colorEffect.Parent = lighting
 
-        -- Red Flash
         TweenService:Create(colorEffect, TweenInfo.new(0.2), {Brightness = 2}):Play()
         task.wait(0.2)
         TweenService:Create(colorEffect, TweenInfo.new(0.5), {Brightness = 0}):Play()
@@ -55,10 +53,8 @@ if entityModel then
             humanoid.Health = 0
             task.wait(0.1)
 
-            -- jumpscare
             createRedFlash()
 
-            -- DeathHint
             firesignal(ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, 
             {"You died to the Cursed Door...", "Do not open doors when something screams!", "Patience could save you."}, "Red")
 
@@ -68,7 +64,6 @@ if entityModel then
         end
     end
 
-    --// Connect when player opens a door
     latestRoom.Changed:Connect(onRoomChange)
 
     --// Auto-disable after scream ends
@@ -77,6 +72,16 @@ if entityModel then
         if sound then
             sound:Destroy()
         end
+
+        -- Vanish sound
+        local vanishSound = Instance.new("Sound")
+        vanishSound.SoundId = "rbxassetid://9125713306"
+        vanishSound.Volume = 4
+        vanishSound.Parent = Workspace
+        vanishSound:Play()
+        vanishSound.Ended:Connect(function()
+            vanishSound:Destroy()
+        end)
     end)
 
     --// Achievement (optional)
@@ -87,7 +92,7 @@ if entityModel then
                 Title = "Uncursed.",
                 Desc = "Don't be fooled!",
                 Reason = "Survived Cursed Door.",
-                Image = "rbxassetid://84988556788398"
+                Image = "rbxassetid://0"
             })
         end
     end)
