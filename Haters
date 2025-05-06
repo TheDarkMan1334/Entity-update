@@ -9,8 +9,8 @@ if game.Workspace:FindFirstChild("SeekMovingNewClone") or
 end
 
 local Kill = true
-local Range = 22 -- Range of 30 studs
-local DamagePerTick = 5 -- Deal 5 damage per second
+local Range = 20 -- Range of 30 studs
+local DamagePerTick = 1 -- Deal 5 damage per second
 local DamageCooldown = 1 -- 1 second between damage
 
 -- Load Hater model
