@@ -34,7 +34,7 @@ require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("
         NoDieOnCrouching = true,
         NoHiding = false,
         AntiCrucifix = false,
-        KillRange = 40,
+        KillRange = 20,
         OneRoom = false,
         DieOnLook = false,
         BreakLights = false,
