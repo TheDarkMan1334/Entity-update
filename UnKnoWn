@@ -9,5 +9,5 @@ sound.SoundId = "rbxassetid://9125712546"
 sound.Volume = 4
 sound.Parent = workspace
 sound:Play()
-   wait(22)
+   wait(20)
 require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Someone is following you.",true)
