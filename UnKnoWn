@@ -17,7 +17,7 @@ sound:Play()
 wait(11)
 local sound = Instance.new("Sound")
 sound.SoundId = "rbxassetid://9125712546"
-sound.Volume = 2
+sound.Volume = 4
 sound.Parent = workspace
 sound:Play()
    wait(22)
