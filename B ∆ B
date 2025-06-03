@@ -21,7 +21,7 @@ sound:Play()
         CustomName = "B ∆ B",
         Model = "rbxassetid://10516208132",
         Speed = 100028,
-        DelayTime = 1,
+        DelayTime = 0,
         HeightOffset = 0,
         CanKill = true,
         NoDieOnCrouching = true,
@@ -30,7 +30,7 @@ sound:Play()
         KillRange = 40,
         OneRoom = false,
         DieOnLook = false,
-        BreakLights = false,
+        BreakLights = true,
         BackwardsMovement = false,
         MovementDeath = {
             false,
@@ -54,8 +54,8 @@ sound:Play()
             true,
             {
                 Type = "1",
-                Image1 = "rbxassetid://84988556788398",
-                Image2 = "rbxassetid://84988556788398",
+                Image1 = "rbxassetid://71340141113006",
+                Image2 = "rbxassetid://71340141113006",
                 Shake = true,
                 Sounds = {
                     "103396125105301",
@@ -70,7 +70,7 @@ sound:Play()
                     Color3.fromRGB(0, 0, 0),
                 },
                 Tease = {
-                    true,
+                    false,
                     Min = 2,
                     Max = 3,
                 },
