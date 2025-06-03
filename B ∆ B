@@ -1,0 +1,123 @@
+local entityModel = true
+local latestRoom = game.ReplicatedStorage.GameData.LatestRoom.Value
+
+-- Check if in Seek, Figure, or rooms 90-100
+if game.Workspace:FindFirstChild("SeekMovingNewClone") or 
+   latestRoom == 50 or latestRoom == 100 or 
+   (latestRoom >= 90 and latestRoom <= 100) then
+    entityModel = false -- Prevent entity from spawning
+end
+
+if entityModel then
+    local sound = Instance.new("Sound")
+sound.SoundId = "rbxassetid://9125713608"
+sound.Volume = 5
+sound.Parent = workspace
+sound:Play()
+   wait(3)
+    local Spawner = loadstring(game:HttpGet('https://raw.githubusercontent.com/MuhXd/DoorSuff/main/OtherSuff/DoorEntitySpawn%2BSource'))()
+
+    local entity = Spawner.createEntity({
+        CustomName = "B ∆ B",
+        Model = "rbxassetid://10516208132",
+        Speed = 100028,
+        DelayTime = 1,
+        HeightOffset = 0,
+        CanKill = true,
+        NoDieOnCrouching = true,
+        NoHiding = false,
+        AntiCrucifix = false,
+        KillRange = 40,
+        OneRoom = false,
+        DieOnLook = false,
+        BreakLights = false,
+        BackwardsMovement = false,
+        MovementDeath = {
+            false,
+            '1',
+        },
+        FlickerLights = {
+            false,
+            0
+        },
+        Cycles = {
+            Min = 18,
+            Max = 19,
+            WaitTime = 2,
+        },
+        CamShake = {
+            false,
+            {3.5, 20, 0.1, 1},
+            100,
+        },
+        Jumpscare = {
+            true,
+            {
+                Type = "1",
+                Image1 = "rbxassetid://84988556788398",
+                Image2 = "rbxassetid://84988556788398",
+                Shake = true,
+                Sounds = {
+                    "103396125105301",
+                    { Volume = 5 },
+                },
+                Sound2 = {
+                    "103396125105301",
+                    { Volume = 5 },
+                },
+                Flashing = {
+                    true,
+                    Color3.fromRGB(0, 0, 0),
+                },
+                Tease = {
+                    true,
+                    Min = 2,
+                    Max = 3,
+                },
+            },
+        },
+        Color = 'GuidingLight',
+        DiffrentMessages = true,
+        CustomDialog = {
+            {"You die by whipser", "how to suviver?", "hide and user your skill", "so many eyes."},
+            {"Stop Dieing"},
+            {"Bruh", "Use what you have learned from Rush!"},
+            {"It seems like Template is causing quite the ruckus...", "Hide in a closet or bed as quickly as possible!"},
+            {"I have told You What to do", "YOU JUST HAVE A SKILL ISSUE"}
+        }
+    })
+
+    entity.Debug.OnEntityMoving = function(Invincible,Hiding,plrCollisionPoint)
+        print("Invincible: "..tostring(Invincible))
+        print("Player to Entity Collision (None hiding Point): "..tostring(plrCollisionPoint))
+        print("Hiding: "..tostring(Hiding))
+    end
+
+    entity.Debug.OnEntitySpawned = function()
+        print("Entity has spawned:")
+    end
+
+    entity.Debug.OnEntityDespawned = function()
+        print("Entity has despawned:")
+    end
+
+    entity.Debug.OnEntityFinishedRebound = function()
+        print("Entity has finished rebound:")
+    end
+
+    entity.Debug.OnEntityEnteredRoom = function(entityTable, room)
+        print("Entity:", "has entered room:",room)
+    end
+
+    entity.Debug.OnLookAtEntity = function()
+        print("Player has looked at entity:")
+    end
+
+    entity.Debug.OnDeath = function()
+        warn("Player has died.")
+        firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, {"You died to ?", "B ∆ B..", "#@*';!?®%!"}, "Blue")
+    end
+
+    -- Run entity
+    Spawner.runEntity(entity)
+end
