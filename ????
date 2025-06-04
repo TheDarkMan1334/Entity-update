@@ -1,44 +1,43 @@
--- Check current room
-local entityModel = true
-local latestRoom = game.ReplicatedStorage.GameData.LatestRoom.Value
+-- UnKnoWn Entity with Crouch Detection and Broken Lights (NO color effect)
 
--- If in Seek, Figure, or Room 50+, don't spawn the entity
-if game.Workspace:FindFirstChild("SeekMovingNewClone") or 
-   latestRoom == 50 or latestRoom >= 90 then
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+local latestRoom = ReplicatedStorage.GameData.LatestRoom.Value
+local entityModel = true
+
+-- Không spawn trong Seek, Figure hoặc phòng 50+
+if workspace:FindFirstChild("SeekMovingNewClone") or latestRoom == 50 or latestRoom >= 90 then
     entityModel = false
 end
 
 if entityModel then
     local Kill = true
-    local unknown = game:GetObjects("rbxassetid://10840326834")[1] -- Load UnKnoWn model
+    local unknown = game:GetObjects("rbxassetid://10840326834")[1]
     unknown.Name = "UnKnoWn"
-    unknown.Parent = game.Workspace
+    unknown.Parent = workspace
 
     local part = unknown:FindFirstChildWhichIsA("BasePart") or unknown:FindFirstChildWhichIsA("Part")
+    part.CFrame = workspace.CurrentRooms:GetChildren()[#workspace.CurrentRooms:GetChildren() - 1].Parts.Floor.CFrame + Vector3.new(0, 6, 0)
 
-    -- Set the position of UnKnoWn in the current room
-    part.CFrame = game.Workspace.CurrentRooms:GetChildren()[#game.Workspace.CurrentRooms:GetChildren() - 1].Parts.Floor.CFrame + Vector3.new(0, 6, 0)
-
-    -- Break all lights (only break, no disabling or sound)
-    for _, obj in ipairs(game.Workspace:GetDescendants()) do
+    
+    for _, obj in ipairs(workspace:GetDescendants()) do
         if obj:IsA("Model") and obj:FindFirstChild("Light") and obj:FindFirstChild("Break") then
-            local breakPart = obj:FindFirstChild("Break")
-            if breakPart then
-                breakPart:Destroy()
-            end
+            obj.Break:Destroy()
         end
     end
 
     wait(3)
 
+    
     task.spawn(function()
-        while Kill == true do
+        while Kill do
             task.wait(1)
-            local char = game.Players.LocalPlayer.Character
-            if char and char:FindFirstChild("Humanoid") then
-                local humanoid = char.Humanoid
 
-                -- Check if crouching (via HipHeight)
+            if humanoid and humanoid.Health > 0 then
                 local isCrouching = humanoid.HipHeight <= 0.4
 
                 if not isCrouching then
@@ -46,31 +45,30 @@ if entityModel then
                 end
 
                 if humanoid.Health <= 0 then
-                    firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, 
-                        {"You died to who you call UnKnoWn...", "It punishes those who stand tall.", "Crouch to survive!"}, "Red")
+                    firesignal(ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, {
+                        "You died to who you call UnKnoWn...",
+                        "It punishes those who stand tall.",
+                        "Crouch to survive!"
+                    }, "Blue")
+
                     wait(0.01)
-                    game:GetService("ReplicatedStorage").GameStats["Player_".. game.Players.LocalPlayer.Name].Total.DeathCause.Value = "UnKnoWn"
+                    ReplicatedStorage.GameStats["Player_"..player.Name].Total.DeathCause.Value = "UnKnoWn"
                 end
             end
         end
     end)
 
-    -- Wait for the room to change
-    game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
-        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+    
+    ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
     Kill = false
-
-    -- Destroy UnKnoWn entity
     unknown:Destroy()
 end
 
----====== Load achievement giver ======---
+--  Achievement
 local achievementGiver = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Custom%20Achievements/Source.lua"))()
-
----====== Display achievement ======---
 achievementGiver({
     Title = "Crouch or Die",
-    Desc = "Gone?.",
+    Desc = "It wants you down low.",
     Reason = "Survived and encountered UnKnoWn.",
     Image = "rbxassetid://71340141113006"
 })
