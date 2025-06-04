@@ -57,6 +57,7 @@ if entityModel then
 
     -- Wait for the room to change
     game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+        game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
     Kill = false
 
     -- Destroy UnKnoWn entity
