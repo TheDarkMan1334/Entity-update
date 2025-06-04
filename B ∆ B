@@ -58,11 +58,11 @@ sound:Play()
                 Image2 = "rbxassetid://71340141113006",
                 Shake = true,
                 Sounds = {
-                    "103396125105301",
+                    "8315677038",
                     { Volume = 5 },
                 },
                 Sound2 = {
-                    "103396125105301",
+                    "8315677038",
                     { Volume = 5 },
                 },
                 Flashing = {
