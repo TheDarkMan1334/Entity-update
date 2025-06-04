@@ -1,73 +1,126 @@
--- UnKnoWn Entity with Crouch Detection and Broken Lights (NO color effect)
-
+-- Services
 local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
+local camera = Workspace.CurrentCamera
 
-local latestRoom = ReplicatedStorage.GameData.LatestRoom.Value
-local entityModel = true
+local Kill = true
+local lookDuration = 4
+local lookStartTime = nil
+local notLookingStartTime = nil
+local disappearDelay = 0.5
+local hasAttacked = false
 
-if workspace:FindFirstChild("SeekMovingNewClone") or latestRoom == 50 or latestRoom >= 90 then
-    entityModel = false
+-- Load model UnKnoWn
+local unknown = game:GetObjects("rbxassetid://10840326834")[1]
+unknown.Name = "UnKnoWn"
+unknown.Parent = Workspace
+
+local part = unknown:FindFirstChildWhichIsA("BasePart") or unknown:FindFirstChildWhichIsA("Part")
+part.CFrame = camera.CFrame * CFrame.new(0, 0, -7)
+
+local attackSound = Instance.new("Sound")
+attackSound.SoundId = "rbxassetid://8315677038"
+attackSound.Volume = 1
+attackSound.Looped = true
+attackSound.Parent = part
+
+local function shakeCamera()
+	local originalCFrame = camera.CFrame
+	local amplitude = 0.1
+	local duration = 0.5
+	local frequency = 20
+	local elapsed = 0
+
+	while elapsed < duration do
+		local offset = Vector3.new(
+			(math.random() - 0.5) * amplitude,
+			(math.random() - 0.5) * amplitude,
+			(math.random() - 0.5) * amplitude
+		)
+		camera.CFrame = originalCFrame * CFrame.new(offset)
+		elapsed += task.wait(1 / frequency)
+	end
+
+	camera.CFrame = originalCFrame
 end
 
-if entityModel then
-    local Kill = true
-    local unknown = game:GetObjects("rbxassetid://10840326834")[1]
-    unknown.Name = "UnKnoWn"
-    unknown.Parent = workspace
+local function showJumpscare()
+	local jumpscareGui = Instance.new("ScreenGui")
+	jumpscareGui.IgnoreGuiInset = true
+	jumpscareGui.ResetOnSpawn = false
+	jumpscareGui.Name = "UnKnoWnJumpscare"
+	jumpscareGui.Parent = player:WaitForChild("PlayerGui")
 
-    local part = unknown:FindFirstChildWhichIsA("BasePart") or unknown:FindFirstChildWhichIsA("Part")
-    part.CFrame = workspace.CurrentRooms:GetChildren()[#workspace.CurrentRooms:GetChildren() - 1].Parts.Floor.CFrame + Vector3.new(0, 6, 0)
+	local image = Instance.new("ImageLabel")
+	image.Size = UDim2.new(1, 0, 1, 0)
+	image.Position = UDim2.new(0, 0, 0, 0)
+	image.Image = "rbxassetid://84988556788398"
+	image.BackgroundTransparency = 1
+	image.ImageTransparency = 0
+	image.Parent = jumpscareGui
 
-    
-    for _, obj in ipairs(workspace:GetDescendants()) do
-        if obj:IsA("Model") and obj:FindFirstChild("Light") and obj:FindFirstChild("Break") then
-            obj.Break:Destroy()
-        end
-    end
-
-    wait(3)
-
-    
-    task.spawn(function()
-        while Kill do
-            task.wait(1)
-
-            if humanoid and humanoid.Health > 0 then
-                local isCrouching = humanoid.HipHeight <= 0.4
-
-                if not isCrouching then
-                    humanoid:TakeDamage(10)
-                end
-
-                if humanoid.Health <= 0 then
-                    firesignal(ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, {
-                        "You died to who you call UnKnoWn...",
-                        "It punishes those who stand tall.",
-                        "Crouch to survive!"
-                    }, "Blue")
-
-                    wait(0.01)
-                    ReplicatedStorage.GameStats["Player_"..player.Name].Total.DeathCause.Value = "UnKnoWn"
-                end
-            end
-        end
-    end)
-
-    
-    ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
-    Kill = false
-    unknown:Destroy()
+	task.delay(4, function()
+		if jumpscareGui then
+			jumpscareGui:Destroy()
+		end
+	end)
 end
 
---  Achievement
-local achievementGiver = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Doors/Custom%20Achievements/Source.lua"))()
-achievementGiver({
-    Title = "Crouch or Die",
-    Desc = "It wants you down low.",
-    Reason = "Survived and encountered UnKnoWn.",
-    Image = "rbxassetid://71340141113006"
-})
+task.spawn(function()
+	while Kill do
+		task.wait(0.1)
+		local screenPos, onScreen = camera:WorldToViewportPoint(part.Position)
+
+		if onScreen then
+			notLookingStartTime = nil
+			if not lookStartTime then
+				lookStartTime = tick()
+			elseif tick() - lookStartTime >= lookDuration and not hasAttacked then
+				hasAttacked = true
+
+				attackSound:Play()
+				task.delay(5, function()
+					attackSound:Stop()
+				end)
+
+				shakeCamera()
+				showJumpscare()
+				humanoid:TakeDamage(50)
+
+				if humanoid.Health <= 0 then
+					local deathSignal = ReplicatedStorage:FindFirstChild("RemotesFolder") and ReplicatedStorage.RemotesFolder:FindFirstChild("DeathHint") and ReplicatedStorage.RemotesFolder.DeathHint:FindFirstChild("OnClientEvent")
+					if deathSignal and typeof(deathSignal) == "Instance" then
+						pcall(function()
+							firesignal(deathSignal, {
+								"You died to who you call UnKnoWn...",
+								"It punished you for not looking away.",
+								"Turn your camera completely away to survive!"
+							}, "Blue")
+						end)
+					end
+
+					pcall(function()
+						ReplicatedStorage.GameStats["Player_"..player.Name].Total.DeathCause.Value = "UnKnoWn"
+					end)
+
+					Kill = false
+					unknown:Destroy()
+				end
+			end
+		else
+			if lookStartTime then
+				if not notLookingStartTime then
+					notLookingStartTime = tick()
+				elseif tick() - notLookingStartTime >= disappearDelay then
+					Kill = false
+					unknown:Destroy()
+				end
+			end
+		end
+	end
+end)
